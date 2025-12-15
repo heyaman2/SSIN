@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신상훈 개인 프로필</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Inter 폰트 설정 및 치지직 다크 테마 기본 설정 */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+KR:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #0d0d0d; /* Ultra Dark Background */
+        }
+        /* 섹션 패딩 및 마진 스타일 */
+        .profile-section {
+            padding: 3rem 0;
+            border-bottom: 1px solid #1f2937; /* Gray-800 separator */
+        }
+        .profile-section:last-child {
+            border-bottom: none;
+        }
+        /* 이미지 호버 확대 효과를 위한 스타일 */
+        .gallery-item-image {
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .gallery-item-image:hover {
+            transform: scale(1.05);
+        }
+        /* 스크롤 가능한 메인 뷰 */
+        #main-scroll-view {
+            transition: opacity 0.3s ease-in-out;
+            max-width: 1024px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        /* 고정 네비게이션 스타일 */
+        .sticky-nav-item:hover {
+            color: #4ade80; /* Chzzk Green (green-400) */
+        }
+        /* 상세 뷰 공통 스타일 */
+        .detail-view {
+            transition: opacity 0.3s ease-in-out;
+            z-index: 20;
+        }
+
+        /* 고정 상단 네비게이션 스타일 (더 어두운 배경) */
+        #top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50; 
+            background-color: #000000; /* Black for high contrast */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.24);
+        }
+        
+        /* 메인 콘텐츠에 상단 네비게이션 높이만큼 패딩 추가 */
+        #main-container {
+            padding-top: 5rem; 
+            min-height: 100vh;
+            background-color: #111827; /* Gray-900 Main Content */
+        }
+
+        /* 연락하기 버튼 스타일 (Chzzk Green 적용) */
+        .contact-button {
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .contact-button:hover {
+            background-color: #16a34a; /* Darker green-600 */
+            transform: translateY(-2px);
+        }
+
+        /* 스크린샷에서 영감을 받은 대형 헤더 스타일 */
+        #main-greeting-header {
+            background-color: #000; /* 배경을 완전히 검정으로 */
+            /* 픽셀 그리드 효과를 간단한 SVG로 시뮬레이션 (불가능하여 제거) */
+        }
+
+        /* 도서/목록이 3열 레이아웃을 깨지 않도록 col-span-3을 사용합니다 */
+        .book-list-container {
+            grid-column: span 2 / span 2; /* 2열짜리 그리드에서는 2칸을 차지하도록 */
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .book-list-container {
+                grid-column: span 3 / span 3; /* 3열짜리 그리드에서는 3칸을 차지하도록 */
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- 0. 고정 상단 네비게이션 바 (모든 뷰에서 고정) -->
+    <nav id="top-navbar" class="text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- SIN 로고 (메인 뷰로 이동) -->
+                <a href="#" id="home-logo" onclick="setView('profile', document.getElementById('main-greeting-header'))" class="flex-shrink-0 flex items-center">
+                    <span class="text-3xl font-extrabold text-green-400 tracking-wider">SIN</span>
+                </a>
+                
+                <!-- 메뉴 항목 (우측 정렬) -->
+                <div class="flex space-x-4 sm:space-x-8 text-lg font-medium">
+                    <a href="#" id="nav-intro-btn" class="sticky-nav-item transition duration-150 p-1 text-gray-300 hover:text-green-400">자기소개</a>
+                    <a href="#" id="nav-hobby-btn" class="sticky-nav-item transition duration-150 p-1 text-gray-300 hover:text-green-400">취미</a>
+                    <a href="#" id="nav-dream-btn" class="sticky-nav-item transition duration-150 p-1 text-gray-300 hover:text-green-400">나의 꿈과 목표</a>
+                    <a href="#" id="nav-record-btn" class="sticky-nav-item transition duration-150 p-1 text-gray-300 hover:text-green-400">기록</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨테이너 (치지직 다크 배경) -->
+    <div id="main-container" class="bg-gray-900">
+        <!-- 1. 메인 스크롤 뷰 (모든 섹션 포함) -->
+        <div id="main-scroll-view" class="p-4 sm:p-8 text-white">
+
+            <!-- 1-0. 대형 프로필/인사말 헤더 -->
+            <header id="main-greeting-header" class="bg-black text-white p-8 sm:p-12 mb-8 rounded-xl shadow-2xl relative overflow-hidden flex flex-col justify-center min-h-[300px]">
+                
+                <div class="relative z-10">
+                    <h1 class="text-5xl sm:text-7xl font-extrabold text-white mb-4">안녕하세요,</h1>
+                    <h2 class="text-6xl sm:text-8xl font-extrabold text-green-400 mb-6 tracking-tighter">신상훈입니다</h2>
+                    <p class="text-xl sm:text-2xl text-gray-300">동의대학교 소프트웨어융합대학(자율전공) 1학년 재학 중입니다.</p>
+                    <p id="user-id-display" class="text-xs text-gray-500 mt-4" title="Loading User ID...">현재 사용자 ID: Loading...</p>
+                </div>
+                
+                <!-- 프로필 이미지 (우측 상단 배치) -->
+                <div class="absolute top-8 right-8 w-24 h-24 sm:w-32 sm:h-32 bg-gray-700 rounded-full flex items-center justify-center overflow-hidden border-4 border-green-500 shadow-xl ring-4 ring-gray-900/50">
+                    <img 
+                        src="uploaded:20251128_195306.jpg-b790d278-14a1-4690-80dd-19fabacb7c05" 
+                        alt="신상훈 프로필 이미지" 
+                        class="w-full h-full object-cover"
+                        onerror="this.onerror=null; this.src='https://placehold.co/128x128/1f2937/4ade80?text=SH'; this.classList.remove('object-cover'); this.classList.add('p-4');"
+                    >
+                </div>
+            </header>
+
+            <!-- 1-1. 자기소개 Card -->
+            <section id="intro-card-section" class="profile-section pt-0 flex justify-center">
+                <div id="intro-card" class="group cursor-pointer bg-gray-800 rounded-xl shadow-xl hover:shadow-green-500/50 transition transform duration-300 hover:scale-[1.03] p-6 border border-gray-700 hover:border-green-500 text-center w-full max-w-sm" onclick="showIntroDetail()">
+                    <div class="flex flex-col items-center justify-center space-y-3">
+                        <span class="text-5xl text-green-400"></span>
+                        <h3 class="font-bold text-2xl text-white group-hover:text-green-400">자기소개 상세보기</h3>
+                        <p class="text-sm text-gray-400">저에 대한 자세한 정보를 확인하세요.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1-2. 취미 리스트 (그린 강조) -->
+            <section id="hobby-list-section" class="profile-section">
+                <h2 class="text-4xl font-extrabold text-white mb-8 border-b-4 border-green-500 pb-3 inline-block">취미 및 활동</h2>
+                
+                <div id="hobby-card-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 취미 카드가 동적으로 삽입됩니다 (JS를 통해) -->
+                </div>
+            </section>
+
+            <!-- 1-3. 나의 꿈과 목표 (Dream) 섹션 (그린 강조) -->
+            <section id="dream-section" class="profile-section pb-12">
+                <h2 class="text-4xl font-extrabold text-white mb-8 border-b-4 border-green-500 pb-3 inline-block">나의 꿈과 목표</h2>
+                <div class="bg-gray-800 p-8 rounded-xl shadow-lg space-y-6 border-l-4 border-green-500">
+                    
+                    <!-- 꿈: 군인이 되기 -->
+                    <div class="space-y-1">
+                        <p class="text-2xl text-white font-bold tracking-tight">1. 꿈: 군인이 되기</p>
+                        <p class="text-gray-300 ml-3">대한민국 군인이 아니라 해외 시민권을 넣어 군인이 되는 것입니다.</p>
+                    </div>
+                    
+                    <hr class="border-gray-700">
+                    
+                    <!-- 목표 1: 해외 언어 마스터 -->
+                    <div class="space-y-1">
+                        <p class="text-2xl text-white font-bold tracking-tight">2. 목표: 영어 또는 해외 언어 회화 마스터</p>
+                        <p class="text-gray-300 ml-3">현지에서 생활하고 현지인과 똑같은 수준이 되는 것입니다.</p>
+                    </div>
+                    
+                    <hr class="border-gray-700">
+
+                    <!-- 목표 2: 특수 이동 수단 자격증 -->
+                    <div class="space-y-1">
+                        <p class="text-2xl text-white font-bold tracking-tight">3. 목표: 헬기나 배 같이 평범하지 않은 이동 수단 자격증 얻기</p>
+                        <p class="text-gray-300 ml-3">새로운 도전을 통해 특별한 이동 수단을 조종할 수 있는 자격증(예: 헬기 조종, 선박 면허 등)을 취득하여 다양한 경험을 쌓고 싶습니다.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1-4. 기록 섹션 (새로 추가됨) -->
+            <section id="record-section" class="profile-section pb-12">
+                <h2 class="text-4xl font-extrabold text-white mb-8 border-b-4 border-green-500 pb-3 inline-block">방문자 기록</h2>
+                
+                <div class="flex justify-end mb-6">
+                    <button onclick="openRecordModal()" class="flex items-center bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-150 transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        기록하기
+                    </button>
+                </div>
+
+                <!-- 기록 목록 컨테이너 -->
+                <div id="records-list-container" class="space-y-4">
+                    <!-- 기록이 실시간으로 여기에 렌더링됩니다. -->
+                    <div class="text-center p-8 bg-gray-800 rounded-xl text-gray-400">
+                        <p>기록을 불러오는 중...</p>
+                    </div>
+                </div>
+            </section>
+
+
+             <!-- 1-5. 연락하기 섹션 (수정됨) -->
+            <section id="contact-section" class="profile-section flex flex-col items-center justify-center text-center pb-20">
+                <h2 class="text-4xl font-extrabold text-white mb-8 border-b-4 border-green-500 pb-3 inline-block">연락하기</h2>
+
+                <!-- 메시지 수신 정보 표시 -->
+                <div class="w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-2xl mb-8 border-2 border-green-500 overflow-hidden relative group transition transform duration-300 hover:scale-[1.02] hover:shadow-green-500/50">
+                    <!-- 배경색/이미지 느낌 -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900/50 to-black/70 z-10 opacity-70 group-hover:opacity-90 transition-opacity duration-300"></div>
+                    
+                    <div class="relative z-20 text-center">
+                        <p class="text-xs text-green-400 font-semibold mb-2 tracking-widest">메시지 수신 주소</p>
+                        <p class="text-lg font-mono font-bold text-gray-200 mt-2 break-words">sdsssh2006@gmail.com</p>
+                        <p class="text-sm text-gray-400 mt-4">버튼을 눌러 메시지 작성 창을 열어주세요.</p>
+                    </div>
+                </div>
+
+                <!-- 버튼을 클릭하면 메시지 작성 모달을 엽니다. -->
+                <button onclick="openContactModal()" class="contact-button flex items-center bg-green-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 transform hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-2 4v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7" />
+                    </svg>
+                    메시지 보내기
+                </button>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- 2. 자기소개 상세 뷰 -->
+    <div id="intro-detail-view" class="fixed inset-0 pt-16 p-4 sm:p-8 hidden opacity-0 bg-gray-900 detail-view text-white min-h-screen overflow-y-auto">
+        <div class="max-w-4xl mx-auto">
+            <button onclick="setView('profile', document.getElementById('intro-card-section'));" class="back-button flex items-center text-green-400 hover:text-green-200 font-semibold mb-8 transition duration-150 p-2 rounded-lg bg-gray-800 hover:bg-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                뒤로 가기 (메인 프로필)
+            </button>
+            
+            <!-- 제목 중앙 정렬 및 이모티콘 제거 -->
+            <h1 class="text-4xl font-extrabold text-white mb-8 border-b-2 border-green-500 pb-3 text-center">자기소개</h1>
+            
+            <!-- 상세 페이지 프로필 정보 추가 (업데이트됨) -->
+            <div id="intro-detail-profile-header" class="text-center pb-10 mb-8 border-b border-gray-700">
+                <!-- 프로필 이미지 (메인과 동일) -->
+                <div class="w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 bg-gray-700 rounded-full flex items-center justify-center overflow-hidden border-4 border-green-500 shadow-xl ring-4 ring-gray-800">
+                    <img 
+                        src="uploaded:20251128_195306.jpg-b790d278-14a1-4690-80dd-19fabacb7c05" 
+                        alt="신상훈 프로필 이미지" 
+                        class="w-full h-full object-cover"
+                        onerror="this.onerror=null; this.src='https://placehold.co/160x160/1f2937/4ade80?text=SH+PROFILE'; this.classList.remove('object-cover'); this.classList.add('p-4');"
+                    >
+                </div>
+                
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">신상훈</h2>
+                <div class="space-y-1 text-lg text-gray-300">
+                    <p>생년월일 : <span class="text-white font-semibold">2006. 02. 10</span></p>
+                    <p>학력 : <span class="text-white font-semibold">배정미래고등학교 졸업<br>현재 동의대학교 소프트웨어융합대학(자율전공) 1학년 재학 중</span></p>
+                    <p>이메일 : <span class="text-white font-semibold font-mono">sdsssh2006@gmail.com</span></p>
+                </div>
+            </div>
+
+            <div id="intro-detail-content" class="text-gray-300 space-y-6 mb-12">
+                <!-- 자기소개 상세 내용이 여기에 로드됩니다 (현재는 빈 내용) -->
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- 3. 취미 상세 뷰 -->
+    <div id="hobby-detail-view" class="fixed inset-0 pt-16 p-4 sm:p-8 hidden opacity-0 bg-gray-900 detail-view text-white min-h-screen overflow-y-auto">
+        <div class="max-w-4xl mx-auto">
+            <button onclick="setView('profile', document.getElementById('hobby-list-section'));" class="back-button flex items-center text-green-400 hover:text-green-200 font-semibold mb-8 transition duration-150 p-2 rounded-lg bg-gray-800 hover:bg-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                뒤로 가기 (메인 프로필)
+            </button>
+            <h1 id="detail-title" class="text-4xl font-extrabold text-white mb-8 border-b-2 border-green-500 pb-3"></h1>
+            
+            <div id="detail-content" class="text-gray-300 space-y-6 mb-12">
+                <!-- 취미 상세 내용 (설명)이 여기에 로드됩니다 -->
+            </div>
+            
+            <!-- 활동 이미지 갤러리 섹션 -->
+            <section class="mb-10">
+                <h3 class="text-3xl font-bold text-gray-200 mb-6 border-b-2 border-green-600 pb-2">활동 목록</h3>
+                <div id="activity-gallery" class="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                    <!-- 활동 이미지가 여기에 동적으로 삽입됩니다 (도서 목록 등은 특별 렌더링됨) -->
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <!-- 4. 이미지 상세 정보 모달 (Dark Theme with Green Border) -->
+    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-80 hidden items-center justify-center z-50 p-4" onclick="closeModal(event)">
+        <div class="bg-gray-800 rounded-lg shadow-2xl max-w-xl w-full p-6 relative" onclick="event.stopPropagation()">
+            <button class="absolute top-3 right-3 text-gray-400 hover:text-white" onclick="closeModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <img id="modal-image" src="" alt="확대 이미지" class="w-full h-auto rounded-lg mb-4 border border-green-500">
+            <h4 id="modal-title" class="text-xl font-bold text-white mb-2"></h4>
+            <p id="modal-description" class="text-gray-300"></p>
+        </div>
+    </div>
+
+    <!-- 5. 기록 작성 모달 -->
+    <div id="record-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4" onclick="closeRecordModal()">
+        <div class="bg-gray-900 rounded-xl shadow-2xl max-w-lg w-full p-6 relative border-2 border-green-500" onclick="event.stopPropagation()">
+            <h3 class="text-2xl font-bold text-white mb-4 border-b pb-2 border-gray-700">새 기록 작성</h3>
+            <form id="record-form" onsubmit="saveRecord(event)">
+                <div class="mb-4">
+                    <label for="record-title" class="block text-sm font-medium text-gray-300 mb-1">제목</label>
+                    <input type="text" id="record-title" name="title" required class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-green-500 focus:border-green-500" placeholder="기록의 제목을 입력하세요 (필수)">
+                </div>
+                <div class="mb-6">
+                    <label for="record-content" class="block text-sm font-medium text-gray-300 mb-1">내용</label>
+                    <textarea id="record-content" name="content" rows="6" required class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-green-500 focus:border-green-500" placeholder="자세한 기록 내용을 입력하세요 (필수)"></textarea>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeRecordModal()" class="px-6 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 transition">
+                        취소
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition">
+                        저장
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. 연락하기 (이메일 작성) 모달 (NEW) -->
+    <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4" onclick="closeContactModal()">
+        <div class="bg-gray-900 rounded-xl shadow-2xl max-w-xl w-full p-6 relative border-2 border-green-500" onclick="event.stopPropagation()">
+            <h3 class="text-2xl font-bold text-white mb-4 border-b pb-2 border-gray-700">메시지 작성 및 보내기</h3>
+            <form id="contact-form" onsubmit="sendEmail(event)">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="contact-name" class="block text-sm font-medium text-gray-300 mb-1">이름</label>
+                        <input type="text" id="contact-name" name="name" required class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-green-500 focus:border-green-500" placeholder="보내는 분의 이름을 입력하세요">
+                    </div>
+                    <div>
+                        <label for="contact-email" class="block text-sm font-medium text-gray-300 mb-1">이메일</label>
+                        <input type="email" id="contact-email" name="email" required class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-green-500 focus:border-green-500" placeholder="답변 받을 이메일 주소 (필수)">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="contact-subject" class="block text-sm font-medium text-gray-300 mb-1">제목</label>
+                    <input type="text" id="contact-subject" name="subject" required class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-green-500 focus:border-green-500" placeholder="메시지 제목 (필수)">
+                </div>
+                <div class="mb-6">
+                    <label for="contact-content" class="block text-sm font-medium text-gray-300 mb-1">내용</label>
+                    <textarea id="contact-content" name="content" rows="6" required class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-green-500 focus:border-green-500" placeholder="문의 및 메시지 내용을 작성하세요 (필수)"></textarea>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeContactModal()" class="px-6 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 transition">
+                        취소
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition">
+                        보내기
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-4 text-center">보내기 버튼을 누르면 이메일 클라이언트(Outlook, Gmail 등)가 실행됩니다.</p>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Firebase SDK Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, onSnapshot, collection, query, orderBy, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Globals (exported to the global scope for the main script)
+        window.initializeApp = initializeApp;
+        window.getAuth = getAuth;
+        window.signInAnonymously = signInAnonymously;
+        window.signInWithCustomToken = signInWithCustomToken;
+        window.getFirestore = getFirestore;
+        window.doc = doc;
+        window.addDoc = addDoc;
+        window.onSnapshot = onSnapshot;
+        window.collection = collection;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.deleteDoc = deleteDoc;
+        window.setLogLevel = setLogLevel;
+        
+        // This is a minimal export to satisfy the structure; actual logic is below.
+    </script>
+    
+    <script>
+        // ======= 데이터 정의 =======
+        
+        // 게임 이름의 첫 글자나 약어로 플레이스홀더 이미지를 생성합니다.
+        function createGamePlaceholder(name) {
+            const text = name.split(/[\s:()]/).map(word => word[0]).join('').toUpperCase();
+            return `https://placehold.co/60x60/1f2937/4ade80?text=${text}`;
+        }
+        
+        const introData = {
+            content: ``,
+            activities: [
+                { name: "학습 환경", img: 'uploaded:20251128_202514.jpg-e49144bc-53b5-494a-92c2-0411010163cc', intro: "AI/ML을 위한 개발 환경 설정 및 코드 작성." },
+                { name: "팀 프로젝트", img: 'uploaded:20251128_202600.jpg-7ad4e4d6-f0d4-4b99-8156-72620072cc85', intro: "협력과 소통을 통해 문제를 해결한 프로젝트 기록." },
+                { name: "컨퍼런스 참여", img: 'uploaded:20251128_202612.jpg-1da8dec8-157e-493a-916d-416c0e673eda', intro: "최신 기술 동향 파악을 위한 학술 행사 참여." },
+            ]
+        };
+
+        const hobbiesData = {
+            '독서 및 시청': {
+                icon: '', 
+                mainImage: ['uploaded:20251128_194608.jpg-e27c669d-85ec-4f79-b338-d09483870ae5', 'uploaded:20251128_194646.jpg-3450148c-aade-4168-8858-bb824ad64051'],
+                description: '여러 여가로 소설, 웹툰(웹소설), 만화, 영화, 애니메이션, 유튜브 등을 보고있습니다.',
+                activities: [
+                    { 
+                        name: "도서 목록", 
+                        intro: [
+                            // 📚 도서 목록
+                            { name: "B급 세계사", link: "https://product.kyobobook.co.kr/detail/S000001975649" },
+                            { name: "법정에서 만난 역사", link: "https://product.kyobobook.co.kr/detail/S000000611617"},
+                            { name: "세상의 마지막 기차역", link: "https://product.kyobobook.co.kr/detail/S000061353833"},
+                            { name: "공간이 만든 공간", link: "https://product.kyobobook.co.kr/detail/S000213738954"},
+                        ]
+                    },
+                    { 
+                        name: "웹툰/웹소설 목록", 
+                        intro: [
+                            // 💻 웹툰/웹소설 목록 이미지 경로 리셋
+                            { name: "전지적 독자 시점", link: "https://comic.naver.com/webtoon/list?titleId=747269"}, 
+                            { name: "오늘만 사는 기사", link: "https://comic.naver.com/webtoon/list?titleId=824543"},
+                            { name: "별을 품은 소드마스터", link: "https://comic.naver.com/webtoon/list?titleId=816809"},
+                        ]
+                    },
+                    { 
+                        name: "유튜브 채널 목록", 
+                        intro: [
+                            { name: "빅헤드", link: "https://www.youtube.com/@%EB%B9%85%ED%97%A4%EB%93%9C"},
+                            { name: "해마티엘", link: "https://www.youtube.com/@HaemaTL"},
+                            { name: "김지누", link: "https://www.youtube.com/@%EC%A7%80%EB%88%84"},
+                            { name: "푸린", link: "https://www.youtube.com/@%ED%91%B8%EB%A6%B0"},
+                            { name: "왈도쿤", link: "https://www.youtube.com/%EC%99%88%EB%8F%84%EC%BF%A4"},
+                            { name: "모카형", link: "https://www.youtube.com/@Moca_"},
+                            { name: "부쿠키", link: "https://www.youtube.com/@%EB%B6%80%EC%BF%A0%ED%82%A400"},
+                        ]
+                    },
+                    { 
+                        name: "영화 목록", 
+                        intro: [
+                            // 🎬 영화 목록 이미지 경로 리셋
+                            { name: "존윅"},
+                            { name: "주토피아2"},
+                            { name: "위키드"},
+                        ]
+                    },
+                ]
+            },
+            '게임': {
+                icon: '', 
+                mainImage: 'uploaded:20251128_194822.jpg-63d62944-4be4-4ff8-a97b-86141e2e26d3',
+                description: '주로 FPS를 즐기며 다양한 게임을 즐기며 딱히 가리는 것은 없다 딱 한 개 Aos류 게임 제외하고 말입니다.',
+                activities: [
+                    { 
+                        name: "플레이 게임 목록", 
+                        intro: [
+                            { name: "배틀그라운드", img: createGamePlaceholder("배틀그라운드")}, 
+                            { name: "발로란트", img: createGamePlaceholder("발로란트")}, 
+                            { name: "명조", img: createGamePlaceholder("명조")}, 
+                            { name: "붕괴 : 스타레일", img: createGamePlaceholder("붕괴 : 스타레일")}, 
+                            { name: "이스케이프룸 타르코프", img: createGamePlaceholder("이스케이프룸 타르코프")}, 
+                            { name: "톰 클랜시의 레인보우식스 시즈 (X)", img: createGamePlaceholder("레인보우식스 시즈 (X)")}, 
+                            { name: "Apex 레전드", img: createGamePlaceholder("Apex 레전드")}, 
+                            { name: "오버워치", img: createGamePlaceholder("오버워치")}
+                        ] 
+                    },
+                ]
+            },
+            '밀리터리': {
+                icon: '', 
+                mainImage: 'uploaded:20251128_195515.jpg-94de992d-e2bf-48c5-b719-fa59fe225e91',
+                description: '밀리터리에 관심이 많습니다.',
+                activities: [
+                    { 
+                        name: "관심사", 
+                        intro: [
+                            "총", 
+                            "방탄복", 
+                            "장비", 
+                            "전쟁 역사", 
+                            "전쟁 뉴스", 
+                            "전술과 기술"
+                        ] 
+                    },
+                ]
+            }
+        };
+
+        // 이미지 ID를 실제 URL로 변환하는 시뮬레이션 함수 (실제 환경에서는 다를 수 있음)
+        function getImageUrl(id) {
+            if (id && id.startsWith('uploaded:')) {
+                return id;
+            }
+            return id; // Playholders now use direct URLs
+        }
+
+
+        // ======= DOM 요소 정의 =======
+        const $mainScrollView = document.getElementById('main-scroll-view');
+        const $introDetailView = document.getElementById('intro-detail-view');
+        const $hobbyDetailView = document.getElementById('hobby-detail-view');
+        const $introDetailContent = document.getElementById('intro-detail-content');
+        const $hobbyCardList = document.getElementById('hobby-card-list'); 
+        const $detailTitle = document.getElementById('detail-title');
+        const $detailContent = document.getElementById('detail-content');
+        const $activityGallery = document.getElementById('activity-gallery');
+        
+        const $navIntroBtn = document.getElementById('nav-intro-btn');
+        const $navHobbyBtn = document.getElementById('nav-hobby-btn');
+        const $navDreamBtn = document.getElementById('nav-dream-btn'); 
+        const $navRecordBtn = document.getElementById('nav-record-btn');
+
+        // 모달 관련 DOM
+        const $imageModal = document.getElementById('image-modal');
+        const $modalImage = document.getElementById('modal-image');
+        const $modalTitle = document.getElementById('modal-title');
+        const $modalDescription = document.getElementById('modal-description');
+        
+        // NEW: 기록 관련 DOM & Firebase State
+        let db;
+        let auth;
+        let userId;
+        let records = [];
+        const $recordsListContainer = document.getElementById('records-list-container');
+        const $recordModal = document.getElementById('record-modal');
+        const $recordForm = document.getElementById('record-form');
+        let appId;
+
+        // NEW: 연락하기 모달 DOM
+        const $contactModal = document.getElementById('contact-modal');
+        
+        // ======= 뷰 전환 및 섹션 로직 =======
+
+        /**
+         * 뷰를 전환하고 필요하다면 메인 스크롤 뷰의 특정 요소로 이동합니다.
+         */
+        function setView(viewName, targetElement = null) {
+            // 모든 뷰 숨기기
+            $mainScrollView.classList.add('hidden', 'opacity-0');
+            $introDetailView.classList.add('hidden', 'opacity-0');
+            $hobbyDetailView.classList.add('hidden', 'opacity-0');
+            
+            let activeView;
+            if (viewName === 'profile') {
+                activeView = $mainScrollView;
+                document.body.style.overflowY = 'auto';
+                if (targetElement) {
+                     // 스크롤 이동이 필요한 경우
+                    const offset = 80; 
+                    setTimeout(() => {
+                        const topPosition = targetElement.offsetTop - offset;
+                        window.scrollTo({ top: topPosition, behavior: 'smooth' });
+                    }, 350); 
+                } else {
+                     // 타겟이 없으면 상단으로 이동 (로고 클릭 시)
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } else if (viewName === 'intro-detail' || viewName === 'hobby-detail') {
+                activeView = (viewName === 'intro-detail') ? $introDetailView : $hobbyDetailView;
+                document.body.style.overflowY = 'auto'; 
+                window.scrollTo(0, 0); 
+            } else {
+                return;
+            }
+
+            activeView.classList.remove('hidden', 'opacity-0');
+            setTimeout(() => activeView.classList.remove('opacity-0'), 10);
+        }
+
+        // 1. 자기소개 상세 뷰 표시
+        function showIntroDetail() {
+            // 1. 상세 뷰 콘텐츠 업데이트 (현재는 빈 내용)
+            $introDetailContent.innerHTML = introData.content;
+            
+            // 2. 뷰 전환
+            setView('intro-detail');
+        }
+
+        // 2. 개별 취미 상세 활동 뷰 표시 (메인 목록에서 클릭 시 전환)
+        function showHobbyDetail(hobbyName) {
+            const data = hobbiesData[hobbyName];
+            if (!data) return;
+
+            // 1. 상세 뷰 콘텐츠 업데이트
+            $detailTitle.textContent = `${hobbyName} 활동`; 
+            $detailContent.innerHTML = `
+                <div class="p-6 border-l-4 border-green-500 bg-gray-800 rounded-lg shadow-2xl mb-8">
+                    <p class="text-lg font-medium">${data.description}</p>
+                </div>
+            `;
+            
+            // 2. 활동 이미지 갤러리 렌더링
+            renderGallery($activityGallery, data.activities);
+            
+            // 3. 뷰 전환
+            setView('hobby-detail');
+        }
+
+        // 메인 화면 취미 카드 목록 렌더링 (이미지 포함)
+        function renderHobbyCards() {
+            $hobbyCardList.innerHTML = '';
+            
+            Object.keys(hobbiesData).forEach(hobbyName => {
+                const hobby = hobbiesData[hobbyName];
+                
+                const card = document.createElement('div');
+                card.className = `group cursor-pointer bg-gray-800 rounded-xl shadow-lg hover:shadow-green-500/50 transition transform duration-300 hover:scale-[1.03] border border-gray-700 hover:border-green-500 overflow-hidden`;
+                
+                let imageHtml = '';
+
+                if (Array.isArray(hobby.mainImage) && hobby.mainImage.length === 2) {
+                    // 메인 이미지가 2개일 경우 50/50 분할
+                    const imageSrc1 = getImageUrl(hobby.mainImage[0]);
+                    const imageSrc2 = getImageUrl(hobby.mainImage[1]);
+                    
+                    imageHtml = `
+                        <!-- 상단 분할 이미지 -->
+                        <div class="flex h-40 overflow-hidden">
+                            <div class="w-1/2 overflow-hidden">
+                                <img 
+                                    src="${imageSrc1}" 
+                                    alt="${hobbyName} 이미지 1" 
+                                    class="w-full h-full object-cover transition duration-300 group-hover:scale-110"
+                                    onerror="this.onerror=null; this.src='https://placehold.co/200x160/1f2937/4ade80?text=Image+A'; this.classList.remove('object-cover'); this.classList.add('p-4');"
+                                >
+                            </div>
+                            <div class="w-1/2 overflow-hidden">
+                                <img 
+                                    src="${imageSrc2}" 
+                                    alt="${hobbyName} 이미지 2" 
+                                    class="w-full h-full object-cover transition duration-300 group-hover:scale-110"
+                                    onerror="this.onerror=null; this.src='https://placehold.co/200x160/166534/4ade80?text=Image+B'; this.classList.remove('object-cover'); this.classList.add('p-4');"
+                                >
+                            </div>
+                        </div>
+                    `;
+
+                } else {
+                    // 메인 이미지가 1개일 경우 일반적인 이미지 표시
+                    const imageSrc = getImageUrl(hobby.mainImage);
+                    
+                    imageHtml = `
+                        <!-- 상단 단일 이미지 -->
+                        <div class="h-40 overflow-hidden">
+                            <img 
+                                src="${imageSrc}" 
+                                alt="${hobbyName} 대표 이미지" 
+                                class="w-full h-full object-cover transition duration-300 group-hover:scale-110"
+                                onerror="this.onerror=null; this.src='https://placehold.co/400x160/1f2937/4ade80?text=${hobbyName.replace(/\s/g, '+')}'; this.classList.remove('object-cover'); this.classList.add('p-4');"
+                            >
+                        </div>
+                    `;
+                }
+
+                const shortDescription = hobby.description.split('.')[0] + '.';
+                
+                card.innerHTML = `
+                    ${imageHtml}
+                    <!-- 내용 영역 -->
+                    <div class="p-4 sm:p-6 text-center">
+                        <h3 class="font-bold text-xl text-white group-hover:text-green-400">
+                            <span>${hobbyName}</span>
+                        </h3>
+                        <p class="text-sm text-gray-400 mt-2 line-clamp-2">${shortDescription}</p>
+                    </div>
+                `;
+                
+                // 클릭 시 해당 취미의 상세 활동 갤러리로 전환
+                card.addEventListener('click', () => {
+                    showHobbyDetail(hobbyName);
+                });
+
+                $hobbyCardList.appendChild(card);
+            });
+        }
+
+        // 이미지 갤러리 렌더링 범용 함수 (도서/웹툰/유튜브/영화 목록 및 단순 텍스트 목록 특별 처리 포함)
+        function renderGallery(container, activities) {
+            container.innerHTML = '';
+            
+            activities.forEach(activity => {
+                
+                // 1. 특별 처리: 목록 (Array of Objects 또는 Array of Strings)
+                if (Array.isArray(activity.intro)) {
+                    
+                    // SimpleList: 밀리터리 관심사 목록 (문자열 배열)
+                    const isSimpleList = activity.intro.length > 0 && typeof activity.intro[0] === 'string';
+                    let icon = '💡';
+                    let listHtml = '';
+                    
+                    // ComplexList: 도서, 웹툰, 유튜브, 영화, 게임 (객체 배열)
+                    const isGameList = activity.name === '플레이 게임 목록';
+
+                    if (isSimpleList) {
+                        // ************************ [밀리터리] 단순 텍스트 목록 렌더링 ************************
+                        icon = '🎯'; // 밀리터리 관심사 아이콘
+                        listHtml = activity.intro.map(item => `
+                            <li class="flex items-center space-x-3 p-3 bg-gray-900 rounded-lg border border-gray-700">
+                                <span class="text-green-400 font-extrabold text-lg flex-shrink-0">•</span> 
+                                <p class="text-lg font-medium text-white">${item}</p>
+                            </li>
+                        `).join('');
+
+                    } else {
+                        // ************************ [기존/게임] 객체 목록 렌더링 ************************
+                        if (activity.name === '도서 목록') {
+                            icon = '📚';
+                        } else if (activity.name === '웹툰/웹소설 목록') {
+                            icon = '💻';
+                        } else if (activity.name === '유튜브 채널 목록') { 
+                            icon = '📺';
+                        } else if (activity.name === '영화 목록') {
+                            icon = '🎬';
+                        } else if (isGameList) {
+                            icon = '🎮'; // 게임 아이콘
+                        }
+
+                        listHtml = activity.intro.map(item => {
+                            
+                            if (activity.name === '유튜브 채널 목록') {
+                                // 유튜브: 이미지 제외, 링크 유지
+                                return `
+                                    <li class="flex items-center space-x-4 p-3 bg-gray-900 rounded-lg border border-gray-700 hover:bg-gray-700 transition duration-150">
+                                        <span class="text-xl text-red-500 flex-shrink-0">▶️</span> 
+                                        <div class="flex-grow">
+                                            <h4 class="text-lg font-semibold text-white">
+                                                <a href="${item.link}" target="_blank" class="text-green-400 hover:text-green-200 transition duration-150 underline">${item.name}</a>
+                                            </h4>
+                                            <p class="text-sm text-gray-400">바로가기 &rarr; YouTube</p>
+                                        </div>
+                                    </li>
+                                `;
+                            } else {
+                                // 영화/웹툰/도서/게임: 이미지, 링크 사용
+                                const imageSizeClass = isGameList ? 'w-12 h-12' : 'w-16 h-24'; // 게임은 작은 정사각형 아이콘
+                                const linkLabel = isGameList ? '플랫폼' : activity.name.includes('도서') ? '구매처' : '사이트';
+                                const linkSource = isGameList ? 'PC/모바일' : activity.name.includes('도서') ? '교보문고' : '네이버';
+                                
+                                const imageSrc = getImageUrl(item.img);
+                                
+                                // Placeholder/Default image logic
+                                let placeholderSrc;
+                                if (isGameList) {
+                                    placeholderSrc = createGamePlaceholder(item.name);
+                                } else {
+                                    const placeholderText = item.name.substring(0, 1) + item.name.substring(item.name.length - 1);
+                                    placeholderSrc = `https://placehold.co/100x150/0d0d0d/10b981?text=${placeholderText}`;
+                                }
+                                
+                                const finalImageSrc = (imageSrc && !imageSrc.startsWith('placeholder_')) ? imageSrc : placeholderSrc;
+                                
+                                const linkHtml = item.link && item.link !== '#' ? 
+                                    `<a href="${item.link}" target="_blank" class="text-green-400 hover:text-green-200 transition duration-150 underline">${item.name}</a>` :
+                                    `<span class="text-white">${item.name}</span>`;
+
+                                return `
+                                    <li class="flex items-center space-x-4 p-3 bg-gray-900 rounded-lg border border-gray-700 hover:bg-gray-700 transition duration-150">
+                                        <div class="flex-shrink-0 ${imageSizeClass} overflow-hidden rounded shadow-md border-2 border-green-500">
+                                            <img src="${finalImageSrc}" alt="${item.name} 이미지" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${placeholderSrc}'; this.classList.remove('object-cover'); this.classList.add('p-4');">
+                                        </div>
+                                        <div class="flex-grow">
+                                            <h4 class="text-lg font-semibold text-white">
+                                                ${linkHtml}
+                                            </h4>
+                                            ${item.link && item.link !== '#' ? `<p class="text-sm text-gray-400">${linkLabel} &rarr; ${linkSource}</p>` : ''}
+                                        </div>
+                                    </li>
+                                `;
+                            }
+                        }).join('');
+                    }
+
+                    
+                    const item = document.createElement('div');
+                    // 단순 텍스트 목록도 full width로 렌더링
+                    item.className = 'book-list-container text-left bg-gray-800 p-6 rounded-xl shadow-2xl border-l-4 border-green-500';
+                    item.innerHTML = `
+                        <h3 class="text-2xl font-bold text-white mb-4">${icon} ${activity.name}</h3>
+                        <ul class="space-y-4">
+                            ${listHtml}
+                        </ul>
+                    `;
+                    container.appendChild(item);
+                    
+                    return; 
+                } 
+                
+                // 2. 일반 갤러리 항목 렌더링 (String Intro) - 취미 상세에서 사용되지 않음
+                const item = document.createElement('div');
+                item.className = 'text-center bg-gray-800 p-3 rounded-lg shadow-xl border border-gray-700';
+                
+                const imageSrc = getImageUrl(activity.img);
+                    
+                item.innerHTML = `
+                    <div class="overflow-hidden rounded-md">
+                        <img 
+                            src="${imageSrc}" 
+                            alt="${activity.name}" 
+                            class="gallery-item-image w-full h-40 object-cover"
+                            data-name="${activity.name}"
+                            data-intro="${activity.intro}"
+                            data-original-src="${imageSrc}"
+                            onerror="this.onerror=null; this.src='https://placehold.co/400x300/1f2937/4ade80?text=${activity.name.replace(/\s/g, '+')}'; this.classList.remove('object-cover'); this.classList.add('p-4');"
+                        >
+                    </div>
+                    <p class="mt-3 text-base font-medium text-gray-300">${activity.name}</p>
+                `;
+                
+                // 이미지 클릭 이벤트 리스너: 모달 열기
+                item.querySelector('.gallery-item-image').addEventListener('click', (e) => {
+                    openModal(e.target.dataset.originalSrc, e.target.dataset.name, e.target.dataset.intro);
+                });
+                
+                container.appendChild(item);
+            });
+        }
+        
+        // 모달 열기 함수
+        function openModal(imgSrc, title, description) {
+            $modalImage.src = imgSrc;
+            $modalTitle.textContent = title;
+            // 리스트 형태로 포맷팅 (쉼표로 구분된 문자열을 리스트로)
+            let formattedDescription = '';
+            if (description && typeof description === 'string' && description.includes(',')) {
+                formattedDescription = description.split(',').map(item => `<li class="ml-2">${item.trim()}</li>`).join('');
+                formattedDescription = `<ul class="list-disc list-inside space-y-1 text-left">${formattedDescription}</ul>`;
+            } else if (description) {
+                formattedDescription = `<p>${description}</p>`;
+            } else {
+                formattedDescription = `<p>상세 정보가 없습니다.</p>`;
+            }
+
+            $modalDescription.innerHTML = formattedDescription;
+
+            $imageModal.classList.remove('hidden');
+            $imageModal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        // 모달 닫기 함수
+        function closeModal(event) {
+            // 모달 배경 클릭이나 닫기 버튼 클릭 시만 닫기
+            if (event && event.target.id !== 'image-modal' && !event.target.classList.contains('back-button')) return; 
+            
+            $imageModal.classList.add('hidden');
+            $imageModal.classList.remove('flex');
+            document.body.style.overflow = 'auto'; 
+        }
+        window.closeModal = closeModal; 
+        
+        // ----------------------------------------------------
+        // NEW: 기록 기능 및 Firebase 로직
+        // ----------------------------------------------------
+
+        // NEW: Firebase Initialization Function
+        async function initializeFirebaseAndLoadData() {
+            try {
+                // Firebase Global Variables
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+                // Ensure all Firebase modules are available
+                if (typeof window.initializeApp === 'undefined') {
+                    console.error("Firebase modules not loaded.");
+                    return;
+                }
+                
+                const app = window.initializeApp(firebaseConfig);
+                db = window.getFirestore(app);
+                auth = window.getAuth(app);
+                window.setLogLevel('Debug'); // For debugging Firestore
+
+                // 1. Authenticate user
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await window.signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await window.signInAnonymously(auth);
+                }
+
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+                
+                // Display userId for multi-user context
+                const $userIdDisplay = document.getElementById('user-id-display');
+                if ($userIdDisplay) {
+                    $userIdDisplay.textContent = `현재 사용자 ID: ${userId}`;
+                    $userIdDisplay.title = userId;
+                }
+
+                // 2. Start real-time listener for records (Public Collection)
+                const recordsCollection = window.collection(db, `artifacts/${appId}/public/data/records`);
+                const recordsQuery = window.query(recordsCollection);
+
+                window.onSnapshot(recordsQuery, (snapshot) => {
+                    records = [];
+                    snapshot.forEach((doc) => {
+                        records.push({ id: doc.id, ...doc.data() });
+                    });
+                    // Sort by timestamp (newest first)
+                    records.sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0));
+                    renderRecords(); // Function to display the records
+                }, (error) => {
+                    console.error("Error listening to records:", error);
+                    showNotification("기록 로드 중 오류 발생.", 'error');
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                showNotification(`Firebase 초기화 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // NEW: Notification System (Replaces alert)
+        const $notificationContainer = document.createElement('div');
+        $notificationContainer.id = 'notification-container';
+        $notificationContainer.className = 'fixed bottom-4 right-4 z-[100] space-y-2';
+        document.body.appendChild($notificationContainer);
+
+        function showNotification(message, type = 'info', duration = 3000) {
+            // Remove previous loading notification if a new one arrives
+            if (type !== 'loading') {
+                document.querySelectorAll('.is-loading').forEach(n => n.remove());
+            }
+
+            const notification = document.createElement('div');
+            let bgColor = 'bg-gray-800';
+            let textColor = 'text-white';
+            let icon = 'ℹ️';
+
+            if (type === 'success') {
+                bgColor = 'bg-green-600';
+                icon = '✅';
+            } else if (type === 'error') {
+                bgColor = 'bg-red-600';
+                icon = '❌';
+            } else if (type === 'warning') {
+                bgColor = 'bg-yellow-600';
+                icon = '⚠️';
+            } else if (type === 'loading') {
+                bgColor = 'bg-blue-600';
+                icon = '⏳';
+                notification.classList.add('is-loading');
+                duration = 5000; // Longer duration for loading
+            }
+
+            notification.className = `${bgColor} ${textColor} p-4 rounded-lg shadow-xl flex items-center space-x-3 opacity-0 transition-opacity duration-300 max-w-xs`;
+            notification.innerHTML = `
+                <span class="text-xl">${icon}</span>
+                <p class="text-sm font-medium">${message}</p>
+            `;
+
+            $notificationContainer.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => notification.classList.remove('opacity-0'), 10);
+
+            // Auto-remove 
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    notification.classList.add('opacity-0');
+                    setTimeout(() => notification.remove(), 300); // Remove from DOM after fade out
+                }, duration);
+            }
+        }
+        window.showNotification = showNotification;
+
+
+        // NEW: Record Modal control
+        function openRecordModal() {
+            if (!userId) {
+                showNotification("사용자 인증 중입니다. 잠시 후 다시 시도해주세요.", 'warning');
+                return;
+            }
+            $recordModal.classList.remove('hidden');
+            $recordModal.classList.add('flex');
+            $recordForm.reset();
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRecordModal() {
+            $recordModal.classList.add('hidden');
+            $recordModal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+        window.openRecordModal = openRecordModal;
+        window.closeRecordModal = closeRecordModal;
+
+        // NEW: Save Record function
+        async function saveRecord(event) {
+            event.preventDefault();
+
+            if (!db || !userId) {
+                showNotification("데이터베이스 연결 오류. 잠시 후 다시 시도해주세요.", 'error');
+                return;
+            }
+
+            const title = document.getElementById('record-title').value.trim();
+            const content = document.getElementById('record-content').value.trim();
+
+            if (!title || !content) {
+                showNotification("제목과 내용을 모두 입력해주세요.", 'warning');
+                return;
+            }
+            
+            showNotification("기록 저장 중...", 'loading');
+
+            try {
+                const recordsCollection = window.collection(db, `artifacts/${appId}/public/data/records`);
+                
+                await window.addDoc(recordsCollection, {
+                    title: title,
+                    content: content,
+                    authorId: userId,
+                    timestamp: new Date(),
+                });
+
+                showNotification("기록이 성공적으로 저장되었습니다!", 'success');
+                closeRecordModal();
+
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                showNotification(`기록 저장 실패: ${e.message}`, 'error');
+            }
+        }
+        window.saveRecord = saveRecord;
+
+        // NEW: Render Records function
+        function renderRecords() {
+            if (!$recordsListContainer) return;
+            
+            if (records.length === 0) {
+                $recordsListContainer.innerHTML = `
+                    <div class="text-center p-8 bg-gray-800 rounded-xl text-gray-400">
+                        <p class="text-lg mb-2">아직 기록된 내용이 없습니다.</p>
+                        <p>가장 먼저 기록을 남겨보세요!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            $recordsListContainer.innerHTML = records.map(record => {
+                const date = record.timestamp instanceof Date ? record.timestamp.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }) : new Date(record.timestamp?.seconds * 1000).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                
+                const isOwner = record.authorId === userId;
+                // 전체 userId는 길기 때문에 앞 8자리만 표시
+                const authorDisplay = isOwner ? '나' : (record.authorId ? `${record.authorId.substring(0, 8)}...` : '익명'); 
+                
+                return `
+                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 ${isOwner ? 'border-green-500' : 'border-blue-500'} transition hover:shadow-xl hover:bg-gray-700/50">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-xl font-bold text-white">${record.title}</h4>
+                            <span class="text-sm text-gray-400 flex-shrink-0">${date}</span>
+                        </div>
+                        <p class="text-gray-300 mb-4 whitespace-pre-wrap">${record.content}</p>
+                        <div class="text-xs text-gray-500 border-t border-gray-700 pt-2 flex justify-between items-center">
+                            <span>작성자 ID: <span class="font-mono text-gray-400" title="${record.authorId}">${authorDisplay}</span></span>
+                            ${isOwner ? `<button onclick="deleteRecord('${record.id}')" class="ml-4 text-red-400 hover:text-red-500 transition font-medium">삭제</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // NEW: Delete Record function
+        async function deleteRecord(recordId) {
+            if (!db || !userId) {
+                showNotification("데이터베이스 연결 오류. 잠시 후 다시 시도해주세요.", 'error');
+                return;
+            }
+
+            const recordToDelete = records.find(r => r.id === recordId);
+            if (!recordToDelete || recordToDelete.authorId !== userId) {
+                showNotification("삭제 권한이 없습니다. 본인이 작성한 기록만 삭제할 수 있습니다.", 'warning', 5000);
+                return;
+            }
+
+            showNotification("기록 삭제 중...", 'loading');
+
+            try {
+                const recordRef = window.doc(db, `artifacts/${appId}/public/data/records`, recordId);
+                await window.deleteDoc(recordRef);
+                showNotification("기록이 삭제되었습니다.", 'success');
+            } catch (e) {
+                console.error("Error deleting document: ", e);
+                showNotification(`삭제 실패: ${e.message}`, 'error');
+            }
+        }
+        window.deleteRecord = deleteRecord;
+        
+        // ----------------------------------------------------
+        // NEW: 연락하기 (이메일) 로직
+        // ----------------------------------------------------
+
+        // NEW: Contact Modal control
+        function openContactModal() {
+            $contactModal.classList.remove('hidden');
+            $contactModal.classList.add('flex');
+            document.getElementById('contact-form').reset();
+            document.body.style.overflow = 'hidden';
+        }
+        window.openContactModal = openContactModal;
+
+        function closeContactModal() {
+            $contactModal.classList.add('hidden');
+            $contactModal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+        window.closeContactModal = closeContactModal;
+
+
+        // NEW: Send Email function (generates mailto link)
+        function sendEmail(event) {
+            event.preventDefault();
+
+            const recipient = 'sdsssh2006@gmail.com'; // 수신자 이메일
+            const name = document.getElementById('contact-name').value.trim();
+            const senderEmail = document.getElementById('contact-email').value.trim();
+            const subject = document.getElementById('contact-subject').value.trim();
+            const content = document.getElementById('contact-content').value.trim();
+
+            if (!name || !senderEmail || !subject || !content) {
+                showNotification("모든 필수 항목을 입력해주세요.", 'warning');
+                return;
+            }
+
+            // 이메일 본문 생성
+            const body = `이름: ${name}\n답변 이메일: ${senderEmail}\n\n[내용]\n${content}`;
+
+            // mailto 링크 생성 및 URL 인코딩
+            const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+            // 이메일 클라이언트 실행 시도
+            try {
+                window.location.href = mailtoLink;
+                closeContactModal();
+                showNotification("이메일 클라이언트가 열립니다. 내용을 확인하고 전송해주세요.", 'success', 7000);
+            } catch (e) {
+                console.error("Failed to open mailto link:", e);
+                showNotification("이메일 클라이언트 실행에 실패했습니다. 직접 주소로 복사하여 보내주세요.", 'error', 7000);
+            }
+        }
+        window.sendEmail = sendEmail;
+
+
+        // ----------------------------------------------------
+        // 초기화 및 이벤트 리스너
+        // ----------------------------------------------------
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 취미 목록 렌더링
+            renderHobbyCards();
+            
+            // Firebase 초기화 및 데이터 로드 시작
+            initializeFirebaseAndLoadData();
+            
+            // 초기 뷰 설정
+            setView('profile'); 
+            
+            // 네비게이션 버튼 이벤트: 자기소개 
+            $navIntroBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showIntroDetail();
+            });
+
+            // 네비게이션 버튼 이벤트: 취미
+            $navHobbyBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                setView('profile', document.getElementById('hobby-list-section'));
+            });
+            
+            // 네비게이션 버튼 이벤트: 나의 꿈과 목표
+            $navDreamBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                setView('profile', document.getElementById('dream-section'));
+            });
+
+            // NEW: 네비게이션 버튼 이벤트: 기록
+            $navRecordBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                setView('profile', document.getElementById('record-section'));
+            });
+
+        });
+
+        // 전역 함수 등록
+        window.createGamePlaceholder = createGamePlaceholder;
+        window.showIntroDetail = showIntroDetail;
+        window.showHobbyDetail = showHobbyDetail;
+        window.setView = setView;
+    </script>
+</body>
+</html>
